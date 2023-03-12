@@ -6,7 +6,7 @@ async function fetchImg(search, page) {
       try {
     const response = await axios.get(`${BASE_URL}${search}&page=${page}&key=${KEY}&image_type=photo&orientation=horizontal&per_page=12`);
           console.log(response);
-          return response.data.hits
+          return response.data
   } catch (error) {
     console.error(error);
   }
