@@ -12,44 +12,20 @@ import 'react-toastify/dist/ReactToastify.css';
 class App extends Component {
   state = {
     search: '',
-    page: 1,
-    arrayImg: null,
+    page: 0,
+    arrayImg: [],
     showModal: false,
     status: false,
     activImg: 0,
   };
 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.state.search !== prevState.search) {
-      this.setState({ status: 'loader' });
-      const result = await fetchImg(this.state.search, this.state.page);
-      this.setState({
-        arrayImg: result.hits,
-        status: 'loadMore',
-      });
-      if (result.hits.length === 0) {
-        toast.error(`No search ${this.state.search}`, {
-          position: 'top-center',
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'dark',
-        });
-        this.setState({
-          status: false,
-        });
-      }
-    }
     if (
-      this.state.search === prevState.search &&
+      this.state.search !== prevState.search ||
       this.state.page !== prevState.page
     ) {
       this.setState({ status: 'loader' });
       const result = await fetchImg(this.state.search, this.state.page);
-
       this.setState(prevState => ({
         arrayImg: [...prevState.arrayImg, ...result.hits],
         status: 'loadMore',
@@ -58,7 +34,7 @@ class App extends Component {
         this.setState({
           status: false,
         });
-        toast.error(`These are all search results ${this.state.search}`, {
+        toast.error(`No search results ${this.state.search}`, {
           position: 'top-center',
           autoClose: 3000,
           hideProgressBar: false,
@@ -94,7 +70,7 @@ class App extends Component {
       });
       return;
     }
-    this.setState({ search, arrayImg: null, page: 1 });
+    this.setState({ search, arrayImg: [], page: 1 });
   };
 
   onLoadMore = () => {
@@ -120,7 +96,7 @@ class App extends Component {
     return (
       <div className={css.App}>
         <Searchbar onSubmit={this.onSubmit} />;
-        {this.state.arrayImg && (
+        {this.state.arrayImg.length > 0 && (
           <ImageGallery
             arrayImg={this.state.arrayImg}
             toggleModal={this.toggleModal}
