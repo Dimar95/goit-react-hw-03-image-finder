@@ -27,7 +27,12 @@ class ImageGallery extends Component {
 }
 export default ImageGallery;
 ImageGallery.pripTypes = {
-  arrayImg: PropTypes.array.isRequired,
+  arrayImg: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
   toggleModal: PropTypes.func.isRequired,
   onActivImg: PropTypes.func.isRequired,
 };

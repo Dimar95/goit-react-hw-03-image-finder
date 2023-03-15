@@ -24,11 +24,11 @@ class Modal extends Component {
     }
   };
   render() {
-    const { largeImageURL } = this.props.children[0];
+    const { largeImageURL, tags   } = this.props.children[0];
     return createPortal(
       <div className={css.Overlay} onClick={this.onClickBackdrop}>
         <div className={css.Modal}>
-          <img src={largeImageURL} alt="" />
+          <img src={largeImageURL} alt={tags} />
         </div>
       </div>,
       modalRoot
@@ -39,5 +39,5 @@ export default Modal;
 
 Modal.propTypes = {
   toggleModal: PropTypes.func.isRequired,
-  children: PropTypes.node.isRequired,
+  children: PropTypes.array.isRequired,
 };

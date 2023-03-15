@@ -17,18 +17,17 @@ class App extends Component {
     showModal: false,
     status: false,
     activImg: 0,
-    loadMore: true,
   };
 
-  onSubmit = search => {
-    this.setState({ search, page: 1, arrayImg: null });
-  };
   async componentDidUpdate(prevProps, prevState) {
     if (this.state.search !== prevState.search) {
-      this.setState({ status: true });
+      this.setState({ status: 'loader' });
       const result = await fetchImg(this.state.search, this.state.page);
-
-      if (result.length === 0) {
+      this.setState({
+        arrayImg: result.hits,
+        status: 'loadMore',
+      });
+      if (result.hits.length === 0) {
         toast.error(`No search ${this.state.search}`, {
           position: 'top-center',
           autoClose: 3000,
@@ -39,23 +38,61 @@ class App extends Component {
           progress: undefined,
           theme: 'dark',
         });
+        this.setState({
+          status: false,
+        });
       }
-
-      this.setState({
-        arrayImg: result.hits,
-        status: false,
-      });
     }
-    if (this.state.page !== prevState.page) {
-      console.log('this.state.arrayImg', this.state.arrayImg);
-      this.setState({ status: true });
+    if (
+      this.state.search === prevState.search &&
+      this.state.page !== prevState.page
+    ) {
+      this.setState({ status: 'loader' });
       const result = await fetchImg(this.state.search, this.state.page);
+
       this.setState(prevState => ({
         arrayImg: [...prevState.arrayImg, ...result.hits],
-        status: false,
+        status: 'loadMore',
       }));
+      if (result.hits.length === 0) {
+        this.setState({
+          status: false,
+        });
+        toast.error(`These are all search results ${this.state.search}`, {
+          position: 'top-center',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        });
+      }
+      if (result.hits.length < 12) {
+        this.setState({
+          status: false,
+        });
+      }
     }
   }
+
+  onSubmit = search => {
+    if (search.trim() === '') {
+      toast.error('Enter a request', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark',
+      });
+      return;
+    }
+    this.setState({ search, arrayImg: null, page: 1 });
+  };
 
   onLoadMore = () => {
     this.setState(prevState => ({
@@ -87,8 +124,10 @@ class App extends Component {
             onActivImg={this.onActivImg}
           />
         )}
-        {this.state.status && <Loader />}
-        {this.state.arrayImg && <Button onButton={this.onLoadMore} />}
+        {this.state.status === 'loader' && <Loader />}
+        {this.state.status === 'loadMore' && (
+          <Button onButton={this.onLoadMore} />
+        )}
         {this.state.showModal && (
           <Modal
             toggleModal={this.toggleModal}
