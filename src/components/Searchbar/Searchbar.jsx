@@ -20,8 +20,7 @@ class Searchbar extends Component {
             e.preventDefault();
             if (this.state.inputValue.trim()) {
             }
-            this.props.onSubmit(this.state.inputValue);
-            this.setState({ inputValue: '' });
+            this.props.onSubmit(this.state.inputValue.trim());
           }}
         >
           <button type="submit" className={css.SearchFormButton}>

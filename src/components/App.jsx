@@ -78,6 +78,9 @@ class App extends Component {
   }
 
   onSubmit = search => {
+    if (this.state.search === search) {
+      return;
+    }
     if (search.trim() === '') {
       toast.error('Enter a request', {
         position: 'top-center',
@@ -131,7 +134,7 @@ class App extends Component {
         {this.state.showModal && (
           <Modal
             toggleModal={this.toggleModal}
-            children={this.state.activImg}
+            activeImage={this.state.activImg}
           />
         )}
         <ToastContainer

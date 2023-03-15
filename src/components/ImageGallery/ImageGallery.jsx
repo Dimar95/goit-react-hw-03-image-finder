@@ -26,7 +26,7 @@ class ImageGallery extends Component {
   }
 }
 export default ImageGallery;
-ImageGallery.pripTypes = {
+ImageGallery.propTypes = {
   arrayImg: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
